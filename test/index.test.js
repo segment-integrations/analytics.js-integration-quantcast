@@ -238,6 +238,16 @@ describe('Quantcast', function() {
         });
       });
 
+      it('should convert orderId to string', function() {
+        analytics.track('event', { orderId: 123 });
+        analytics.called(window._qevents.push, {
+          event: 'click',
+          labels: 'event.event',
+          qacct: options.pCode,
+          orderid: '123'
+        });
+      });
+
       it('should handle completed order events', function() {
         analytics.track('completed order', {
           orderId: '780bc55',

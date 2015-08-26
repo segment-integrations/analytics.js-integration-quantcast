@@ -9,7 +9,8 @@
     "segmentio/analytics.js-integration": "^1.0.0",
     "segmentio/global-queue": "0.0.2",
     "component/reduce": "1.0.1",
-    "segmentio/use-https": "0.1.0"
+    "segmentio/use-https": "0.1.0",
+    "component/url": "v0.2.1"
   },
   "development": {
     "segmentio/analytics.js-core": "^2.10.0",

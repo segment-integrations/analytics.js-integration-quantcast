@@ -90,11 +90,20 @@ describe('Quantcast', function() {
         analytics.stub(window._qevents, 'push');
       });
 
+      it('should push the hostnamePlusPath as a label if no page name is provided', function() {
+        analytics.page();
+        analytics.called(window._qevents.push, {
+          event: 'refresh',
+          labels: 'page.localhost/',
+          qacct: options.pCode
+        });
+      });
+
       it('should push a refresh event with pCode', function() {
         analytics.page();
         analytics.called(window._qevents.push, {
           event: 'refresh',
-          labels: 'page.',
+          labels: 'page.localhost/',
           qacct: options.pCode
         });
       });
@@ -140,7 +149,7 @@ describe('Quantcast', function() {
         analytics.page();
         analytics.called(window._qevents.push, {
           event: 'refresh',
-          labels: 'page.',
+          labels: 'page.localhost/',
           qacct: options.pCode,
           uid: 'id'
         });

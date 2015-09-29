@@ -235,6 +235,15 @@ describe('Quantcast', function() {
         });
       });
 
+      it('should strip special characters from labels', function() {
+        analytics.track('event', { label: 'new-Label?' }, { Quantcast: { labels: ['other!', 'labels_test()'] }});
+        analytics.called(window._qevents.push, {
+          event: 'click',
+          labels: 'event.event,newLabel,other,labelstest',
+          qacct: options.pCode
+        });
+      });
+
       it('should push custom labels from QC labels for the event', function() {
         analytics.track('event', { label: 'newLabel' }, { Quantcast: { labels: ['other', 'labels'] }});
         analytics.called(window._qevents.push, {

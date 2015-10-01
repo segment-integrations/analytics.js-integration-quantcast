@@ -67,7 +67,7 @@ describe('Quantcast', function() {
         var pushed = window._qevents[0];
         analytics.assert(options.pCode === pushed.qacct);
         analytics.assert(pushed.event == null);
-        analytics.assert(pushed.labels === 'page.category.name');
+        analytics.assert(pushed.labels === 'category.name');
       });
     });
   });
@@ -90,65 +90,94 @@ describe('Quantcast', function() {
         analytics.stub(window._qevents, 'push');
       });
 
-      it('should push a refresh event with pCode', function() {
-        analytics.page();
-        analytics.called(window._qevents.push, {
-          event: 'refresh',
-          labels: 'page.',
-          qacct: options.pCode
+      describe('when advertise is false', function() {
+        it('should push a refresh event with pCode', function() {
+          analytics.page();
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            qacct: options.pCode
+          });
         });
-      });
 
-      it('should push the page name as a label', function() {
-        analytics.page('Page Name');
-        analytics.called(window._qevents.push, {
-          event: 'refresh',
-          labels: 'page.Page Name',
-          qacct: options.pCode
+        it('should push the page name as a label', function() {
+          analytics.page('Page Name');
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: 'Page Name',
+            qacct: options.pCode
+          });
         });
-      });
 
-      it('should push the page name as a label without commas', function() {
-        analytics.page('Page, Name');
-        analytics.called(window._qevents.push, {
-          event: 'refresh',
-          labels: 'page.Page,Name',
-          qacct: options.pCode
+        it('should push the page name as a label without commas', function() {
+          analytics.page('Page, Name');
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: 'Page Name',
+            qacct: options.pCode
+          });
         });
-      });
 
-      it('should push the page category and name as labels', function() {
-        analytics.page('Category', 'Page');
-        analytics.called(window._qevents.push, {
-          event: 'refresh',
-          labels: 'page.Category.Page',
-          qacct: options.pCode
+        it('should push the page category and name as labels', function() {
+          analytics.page('Category', 'Page');
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: 'Category.Page',
+            qacct: options.pCode
+          });
         });
-      });
 
-      it('should add the properties labels to the label string', function() {
-        analytics.page('Category', 'Page', { label: 'TestLabel' });
-        analytics.called(window._qevents.push, {
-          event: 'refresh',
-          labels: 'page.Category.Page.TestLabel',
-          qacct: options.pCode
+        it('should add the properties labels to the custom label string', function() {
+          analytics.page('Category', 'Page', { label: 'TestLabel' });
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: 'Category.Page,TestLabel',
+            qacct: options.pCode
+          });
         });
-      });
 
-      it('should push the user id', function() {
-        analytics.user().identify('id');
-        analytics.page();
-        analytics.called(window._qevents.push, {
-          event: 'refresh',
-          labels: 'page.',
-          qacct: options.pCode,
-          uid: 'id'
+        it('should add the explicit QC labels to the custom label string', function() {
+          analytics.page('Category', 'Page', {}, { Quantcast: { labels: ['TestLabel', 'TestLabel2'] }});
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: 'Category.Page,TestLabel,TestLabel2',
+            qacct: options.pCode
+          });
+        });
+
+        it('should add properties labels and the explicit QC labels to the custom label string', function() {
+          analytics.page('Category', 'Page', { label: 'TestLabel' }, { Quantcast: { labels: ['TestLabel1', 'TestLabel2'] }});
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: 'Category.Page,TestLabel,TestLabel1,TestLabel2',
+            qacct: options.pCode
+          });
+        });
+
+        it('should not send a label without name or category', function(){
+          analytics.page();
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            qacct: options.pCode
+          });
+        });
+
+        it('should push the user id', function() {
+          analytics.user().identify('id');
+          analytics.page();
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            qacct: options.pCode,
+            uid: 'id'
+          });
         });
       });
 
       describe('when advertise is true', function() {
-        it('should prefix with _fp.event', function() {
+        beforeEach(function() {
           quantcast.options.advertise = true;
+        });
+
+        it('should prefix with _fp.event', function() {
           analytics.page('Page Name');
           analytics.called(window._qevents.push, {
             event: 'refresh',
@@ -158,11 +187,19 @@ describe('Quantcast', function() {
         });
 
         it('should send category and name', function() {
-          quantcast.options.advertise = true;
           analytics.page('Category Name', 'Page Name');
           analytics.called(window._qevents.push, {
             event: 'refresh',
-            labels: '_fp.event.Category Name Page Name',
+            labels: '_fp.event.Category Name.Page Name',
+            qacct: options.pCode
+          });
+        });
+
+        it('should fallback on default when no name is passed', function() {
+          analytics.page();
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: '_fp.event.Default',
             qacct: options.pCode
           });
         });
@@ -189,192 +226,85 @@ describe('Quantcast', function() {
         analytics.stub(window._qevents, 'push');
       });
 
-      it('should push a click event', function() {
-        analytics.track('event');
-        analytics.called(window._qevents.push, {
-          event: 'click',
-          labels: 'event.event',
-          qacct: options.pCode
-        });
-      });
-
-      it('should push revenue for the event', function() {
-        analytics.track('event', { revenue: 10.45 });
-        analytics.called(window._qevents.push, {
-          event: 'click',
-          labels: 'event.event',
-          qacct: options.pCode,
-          revenue: '10.45'
-        });
-      });
-
-      it('should push custom labels for the event', function() {
-        analytics.track('event', { label: 'newLabel,OtherLables' });
-        analytics.called(window._qevents.push, {
-          event: 'click',
-          labels: 'event.event.newLabel,OtherLables',
-          qacct: options.pCode
-        });
-      });
-
-      it('should push the user id', function() {
-        analytics.user().identify('id');
-        analytics.track('event');
-        analytics.called(window._qevents.push, {
-          event: 'click',
-          labels: 'event.event',
-          qacct: options.pCode,
-          uid: 'id'
-        });
-      });
-
-      it('should push the orderid', function() {
-        analytics.track('event', { orderId: '123' });
-        analytics.called(window._qevents.push, {
-          event: 'click',
-          labels: 'event.event',
-          qacct: options.pCode,
-          orderid: '123'
-        });
-      });
-
-      it('should convert orderId to string', function() {
-        analytics.track('event', { orderId: 123 });
-        analytics.called(window._qevents.push, {
-          event: 'click',
-          labels: 'event.event',
-          qacct: options.pCode,
-          orderid: '123'
-        });
-      });
-
-      it('should handle completed order events', function() {
-        analytics.track('completed order', {
-          orderId: '780bc55',
-          category: 'tech',
-          total: 99.99,
-          shipping: 13.99,
-          tax: 20.99,
-          products: [{
-            quantity: 1,
-            price: 24.75,
-            name: 'my product',
-            sku: 'p-298'
-          }, {
-            quantity: 3,
-            price: 24.75,
-            name: 'other product',
-            sku: 'p-299'
-          }]
-        });
-        analytics.called(window._qevents.push, {
-          event: 'refresh',
-          labels: 'event.completed order',
-          orderid: '780bc55',
-          qacct: options.pCode,
-          revenue: '99.99'
-        });
-      });
-
-      it('should set repeat property if present', function() {
-        analytics.track('completed order', {
-          orderId: '780bc55',
-          category: 'tech',
-          total: 99.99,
-          shipping: 13.99,
-          tax: 20.99,
-          repeat: false,
-          products: [{
-            quantity: 1,
-            price: 24.75,
-            name: 'my product',
-            sku: 'p-298'
-          }, {
-            quantity: 3,
-            price: 24.75,
-            name: 'other product',
-            sku: 'p-299'
-          }]
-        });
-        analytics.called(window._qevents.push, {
-          event: 'refresh',
-          labels: 'event.completed order,_fp.customer.new',
-          orderid: '780bc55',
-          qacct: options.pCode,
-          revenue: '99.99'
-        });
-      });
-
-      it('should not set repeat label if repeat property not present', function() {
-        analytics.track('completed order', {
-          orderId: '780bc55',
-          category: 'tech',
-          total: 99.99,
-          shipping: 13.99,
-          tax: 20.99,
-          products: [{
-            quantity: 1,
-            price: 24.75,
-            name: 'my product',
-            sku: 'p-298'
-          }, {
-            quantity: 3,
-            price: 24.75,
-            name: 'other product',
-            sku: 'p-299'
-          }]
-        });
-        analytics.called(window._qevents.push, {
-          event: 'refresh',
-          labels: 'event.completed order',
-          orderid: '780bc55',
-          qacct: options.pCode,
-          revenue: '99.99'
-        });
-      });
-
-      it('should set repeat label to "repeat" if true', function() {
-        analytics.track('completed order', {
-          orderId: '780bc55',
-          category: 'tech',
-          total: 99.99,
-          shipping: 13.99,
-          tax: 20.99,
-          repeat: true,
-          products: [{
-            quantity: 1,
-            price: 24.75,
-            name: 'my product',
-            sku: 'p-298'
-          }, {
-            quantity: 3,
-            price: 24.75,
-            name: 'other product',
-            sku: 'p-299'
-          }]
-        });
-        analytics.called(window._qevents.push, {
-          event: 'refresh',
-          labels: 'event.completed order,_fp.customer.repeat',
-          orderid: '780bc55',
-          qacct: options.pCode,
-          revenue: '99.99'
-        });
-      });
-
-      describe('when advertise is true', function() {
-        it('should prefix with _fp.event', function() {
-          quantcast.options.advertise = true;
+      describe('when advertiser is false', function() {
+        it('should push a click event', function() {
           analytics.track('event');
           analytics.called(window._qevents.push, {
             event: 'click',
-            labels: '_fp.event.event',
+            labels: 'event',
             qacct: options.pCode
           });
         });
 
+        it('should push revenue for the event', function() {
+          analytics.track('event', { revenue: 10.45 });
+          analytics.called(window._qevents.push, {
+            event: 'click',
+            labels: 'event',
+            qacct: options.pCode,
+            revenue: '10.45'
+          });
+        });
+
+        it('should push custom label from properties for the event', function() {
+          analytics.track('event', { label: 'newLabel' });
+          analytics.called(window._qevents.push, {
+            event: 'click',
+            labels: 'event,newLabel',
+            qacct: options.pCode
+          });
+        });
+
+        it('should strip special characters from labels', function() {
+          analytics.track('event', { label: 'new-Label?' }, { Quantcast: { labels: ['other!', 'labels_test()'] }});
+          analytics.called(window._qevents.push, {
+            event: 'click',
+            labels: 'event,newLabel,other,labelstest',
+            qacct: options.pCode
+          });
+        });
+
+        it('should push custom labels from QC labels for the event', function() {
+          analytics.track('event', { label: 'newLabel' }, { Quantcast: { labels: ['other', 'labels'] }});
+          analytics.called(window._qevents.push, {
+            event: 'click',
+            labels: 'event,newLabel,other,labels',
+            qacct: options.pCode
+          });
+        });
+
+        it('should push the user id', function() {
+          analytics.user().identify('id');
+          analytics.track('event');
+          analytics.called(window._qevents.push, {
+            event: 'click',
+            labels: 'event',
+            qacct: options.pCode,
+            uid: 'id'
+          });
+        });
+
+        it('should push the orderid', function() {
+          analytics.track('event', { orderId: '123' });
+          analytics.called(window._qevents.push, {
+            event: 'click',
+            labels: 'event',
+            qacct: options.pCode,
+            orderid: '123'
+          });
+        });
+
+        it('should convert orderId to string', function() {
+          analytics.track('event', { orderId: 123 });
+          analytics.called(window._qevents.push, {
+            event: 'click',
+            labels: 'event',
+            qacct: options.pCode,
+            orderid: '123'
+          });
+        });
+
         it('should handle completed order events', function() {
-          quantcast.options.advertise = true;
           analytics.track('completed order', {
             orderId: '780bc55',
             category: 'tech',
@@ -395,7 +325,165 @@ describe('Quantcast', function() {
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
-            labels: '_fp.event.completed order,_fp.pcat.tech',
+            labels: 'completed order',
+            orderid: '780bc55',
+            qacct: options.pCode,
+            revenue: '99.99'
+          });
+        });
+
+        it('should set repeat property if present', function() {
+          analytics.track('completed order', {
+            orderId: '780bc55',
+            category: 'tech',
+            total: 99.99,
+            shipping: 13.99,
+            tax: 20.99,
+            repeat: false,
+            products: [{
+              quantity: 1,
+              price: 24.75,
+              name: 'my product',
+              sku: 'p-298'
+            }, {
+              quantity: 3,
+              price: 24.75,
+              name: 'other product',
+              sku: 'p-299'
+            }]
+          });
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: 'completed order',
+            orderid: '780bc55',
+            qacct: options.pCode,
+            revenue: '99.99'
+          });
+        });
+
+        it('should not set repeat label if repeat property not present', function() {
+          analytics.track('completed order', {
+            orderId: '780bc55',
+            category: 'tech',
+            total: 99.99,
+            shipping: 13.99,
+            tax: 20.99,
+            products: [{
+              quantity: 1,
+              price: 24.75,
+              name: 'my product',
+              sku: 'p-298'
+            }, {
+              quantity: 3,
+              price: 24.75,
+              name: 'other product',
+              sku: 'p-299'
+            }]
+          });
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: 'completed order',
+            orderid: '780bc55',
+            qacct: options.pCode,
+            revenue: '99.99'
+          });
+        });
+
+        it('should set repeat label to "repeat" if true', function() {
+          analytics.track('completed order', {
+            orderId: '780bc55',
+            category: 'tech',
+            total: 99.99,
+            shipping: 13.99,
+            tax: 20.99,
+            repeat: true,
+            products: [{
+              quantity: 1,
+              price: 24.75,
+              name: 'my product',
+              sku: 'p-298'
+            }, {
+              quantity: 3,
+              price: 24.75,
+              name: 'other product',
+              sku: 'p-299'
+            }]
+          });
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: 'completed order',
+            orderid: '780bc55',
+            qacct: options.pCode,
+            revenue: '99.99'
+          });
+        });
+      });
+
+      describe('when advertise is true', function() {
+        it('should prefix with _fp.event', function() {
+          quantcast.options.advertise = true;
+          analytics.track('event');
+          analytics.called(window._qevents.push, {
+            event: 'click',
+            labels: '_fp.event.event',
+            qacct: options.pCode
+          });
+        });
+
+        it('should handle completed order events', function() {
+          quantcast.options.advertise = true;
+          analytics.track('completed order', {
+            orderId: '780bc55',
+            category: 'tech',
+            repeat: true,
+            total: 99.99,
+            shipping: 13.99,
+            tax: 20.99,
+            products: [{
+              quantity: 1,
+              price: 24.75,
+              name: 'my product',
+              sku: 'p-298'
+            }, {
+              quantity: 3,
+              price: 24.75,
+              name: 'other product',
+              sku: 'p-299'
+            }]
+          });
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: '_fp.event.completed order,_fp.pcat.tech,_fp.customer.repeat',
+            orderid: '780bc55',
+            qacct: options.pCode,
+            revenue: '99.99'
+          });
+        });
+
+        it('should respect repeat:false as new customer', function() {
+          quantcast.options.advertise = true;
+          analytics.track('completed order', {
+            orderId: '780bc55',
+            category: 'tech',
+            repeat: false,
+            total: 99.99,
+            shipping: 13.99,
+            tax: 20.99,
+            products: [{
+              quantity: 1,
+              price: 24.75,
+              name: 'my product',
+              sku: 'p-298'
+            }, {
+              quantity: 3,
+              price: 24.75,
+              name: 'other product',
+              sku: 'p-299'
+            }]
+          });
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: '_fp.event.completed order,_fp.pcat.tech,_fp.customer.new',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'

@@ -48,6 +48,13 @@ describe('Quantcast', function() {
         analytics.assert(window._qevents[0].qacct === options.pCode);
       });
 
+      it('userId should be a string', function() {
+        analytics.user().identify(1738);
+        analytics.initialize();
+        analytics.page();
+        analytics.assert(window._qevents[0].uid === '1738');
+      });
+
       it('should push the user id', function() {
         analytics.user().identify('id');
         analytics.initialize();
@@ -170,6 +177,16 @@ describe('Quantcast', function() {
             uid: 'id'
           });
         });
+
+        it('userId should be a string', function() {
+          analytics.user().identify(1738);
+          analytics.page();
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            qacct: options.pCode,
+            uid: '1738'
+          });
+        });
       });
 
       describe('when advertise is true', function() {
@@ -218,6 +235,11 @@ describe('Quantcast', function() {
       it('should update the user id', function() {
         analytics.identify('id');
         analytics.assert(window._qevents[0].uid === 'id');
+      });
+
+      it('userId should be stringified', function() {
+        analytics.identify(1738);
+        analytics.assert(window._qevents[0].uid === '1738');
       });
     });
 
@@ -281,6 +303,17 @@ describe('Quantcast', function() {
             labels: 'event',
             qacct: options.pCode,
             uid: 'id'
+          });
+        });
+
+        it('should stringify userId', function() {
+          analytics.user().identify(1738);
+          analytics.track('event');
+          analytics.called(window._qevents.push, {
+            event: 'click',
+            labels: 'event',
+            qacct: options.pCode,
+            uid: '1738'
           });
         });
 

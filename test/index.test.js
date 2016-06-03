@@ -338,8 +338,8 @@ describe('Quantcast', function() {
           });
         });
 
-        it('should handle completed order events', function() {
-          analytics.track('completed order', {
+        it('should handle order completed events', function() {
+          analytics.track('order completed', {
             orderId: '780bc55',
             category: 'tech',
             total: 99.99,
@@ -359,7 +359,7 @@ describe('Quantcast', function() {
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
-            labels: 'completed order',
+            labels: 'order completed',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'
@@ -367,7 +367,7 @@ describe('Quantcast', function() {
         });
 
         it('should set repeat property if present', function() {
-          analytics.track('completed order', {
+          analytics.track('order completed', {
             orderId: '780bc55',
             category: 'tech',
             total: 99.99,
@@ -388,7 +388,7 @@ describe('Quantcast', function() {
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
-            labels: 'completed order',
+            labels: 'order completed',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'
@@ -396,7 +396,7 @@ describe('Quantcast', function() {
         });
 
         it('should not set repeat label if repeat property not present', function() {
-          analytics.track('completed order', {
+          analytics.track('order completed', {
             orderId: '780bc55',
             category: 'tech',
             total: 99.99,
@@ -416,7 +416,7 @@ describe('Quantcast', function() {
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
-            labels: 'completed order',
+            labels: 'order completed',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'
@@ -424,7 +424,7 @@ describe('Quantcast', function() {
         });
 
         it('should set repeat label to "repeat" if true', function() {
-          analytics.track('completed order', {
+          analytics.track('order completed', {
             orderId: '780bc55',
             category: 'tech',
             total: 99.99,
@@ -445,7 +445,7 @@ describe('Quantcast', function() {
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
-            labels: 'completed order',
+            labels: 'order completed',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'
@@ -464,9 +464,9 @@ describe('Quantcast', function() {
           });
         });
 
-        it('should handle completed order events', function() {
+        it('should handle order completed events', function() {
           quantcast.options.advertise = true;
-          analytics.track('completed order', {
+          analytics.track('order completed', {
             orderId: '780bc55',
             category: 'tech',
             repeat: true,
@@ -487,7 +487,7 @@ describe('Quantcast', function() {
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
-            labels: '_fp.event.completed order,_fp.pcat.tech,_fp.customer.repeat',
+            labels: '_fp.event.order completed,_fp.pcat.tech,_fp.customer.repeat',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'
@@ -496,7 +496,7 @@ describe('Quantcast', function() {
 
         it('should respect repeat:false as new customer', function() {
           quantcast.options.advertise = true;
-          analytics.track('completed order', {
+          analytics.track('order completed', {
             orderId: '780bc55',
             category: 'tech',
             repeat: false,
@@ -517,7 +517,7 @@ describe('Quantcast', function() {
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
-            labels: '_fp.event.completed order,_fp.pcat.tech,_fp.customer.new',
+            labels: '_fp.event.order completed,_fp.pcat.tech,_fp.customer.new',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'

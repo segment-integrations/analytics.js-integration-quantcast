@@ -1,8 +1,9 @@
+'use strict';
 
-var Analytics = require('analytics.js-core').constructor;
-var integration = require('analytics.js-integration');
-var sandbox = require('clear-env');
-var tester = require('analytics.js-integration-tester');
+var Analytics = require('@segment/analytics.js-core').constructor;
+var integration = require('@segment/analytics.js-integration');
+var sandbox = require('@segment/clear-env');
+var tester = require('@segment/analytics.js-integration-tester');
 var Quantcast = require('../lib/');
 
 describe('Quantcast', function() {
@@ -143,7 +144,7 @@ describe('Quantcast', function() {
         });
 
         it('should add the explicit QC labels to the custom label string', function() {
-          analytics.page('Category', 'Page', {}, { Quantcast: { labels: ['TestLabel', 'TestLabel2'] }});
+          analytics.page('Category', 'Page', {}, { Quantcast: { labels: ['TestLabel', 'TestLabel2'] } });
           analytics.called(window._qevents.push, {
             event: 'refresh',
             labels: 'Category.Page,TestLabel,TestLabel2',
@@ -152,7 +153,7 @@ describe('Quantcast', function() {
         });
 
         it('should add properties labels and the explicit QC labels to the custom label string', function() {
-          analytics.page('Category', 'Page', { label: 'TestLabel' }, { Quantcast: { labels: ['TestLabel1', 'TestLabel2'] }});
+          analytics.page('Category', 'Page', { label: 'TestLabel' }, { Quantcast: { labels: ['TestLabel1', 'TestLabel2'] } });
           analytics.called(window._qevents.push, {
             event: 'refresh',
             labels: 'Category.Page,TestLabel,TestLabel1,TestLabel2',
@@ -160,7 +161,7 @@ describe('Quantcast', function() {
           });
         });
 
-        it('should not send a label without name or category', function(){
+        it('should not send a label without name or category', function() {
           analytics.page();
           analytics.called(window._qevents.push, {
             event: 'refresh',
@@ -278,7 +279,7 @@ describe('Quantcast', function() {
         });
 
         it('should strip special characters from labels', function() {
-          analytics.track('event', { label: 'new-Label?' }, { Quantcast: { labels: ['other!', 'labels_test()'] }});
+          analytics.track('event', { label: 'new-Label?' }, { Quantcast: { labels: ['other!', 'labels_test()'] } });
           analytics.called(window._qevents.push, {
             event: 'click',
             labels: 'event,newLabel,other,labelstest',
@@ -287,7 +288,7 @@ describe('Quantcast', function() {
         });
 
         it('should push custom labels from QC labels for the event', function() {
-          analytics.track('event', { label: 'newLabel' }, { Quantcast: { labels: ['other', 'labels'] }});
+          analytics.track('event', { label: 'newLabel' }, { Quantcast: { labels: ['other', 'labels'] } });
           analytics.called(window._qevents.push, {
             event: 'click',
             labels: 'event,newLabel,other,labels',

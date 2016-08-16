@@ -23,14 +23,14 @@
   },
   "homepage": "https://github.com/segment-integrations/analytics.js-integration-quantcast#readme",
   "dependencies": {
-    "@segment/analytics.js-integration": "^2.1.0",
+    "@segment/analytics.js-integration": "^3.1.0",
     "global-queue": "^1.0.1",
     "is": "^3.1.0",
     "use-https": "^0.1.1"
   },
   "devDependencies": {
     "@segment/analytics.js-core": "^3.0.0",
-    "@segment/analytics.js-integration-tester": "^2.0.0",
+    "@segment/analytics.js-integration-tester": "^3.0.0",
     "@segment/clear-env": "^2.0.0",
     "@segment/eslint-config": "^3.1.1",
     "browserify": "^13.0.0",

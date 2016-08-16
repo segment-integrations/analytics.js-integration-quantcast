@@ -1,3 +1,10 @@
+
+2.1.0 / 2016-08-16
+==================
+
+  * Merge pull request #8 from segment-integrations/update/ecommerce-spec-v2
+  * update ecommerce syntax from v1 to v2
+
 2.0.0 / 2016-06-21
 ==================
 

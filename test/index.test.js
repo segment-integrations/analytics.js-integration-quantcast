@@ -45,37 +45,24 @@ describe('Quantcast', function() {
     describe('#initialize', function() {
       it('should push the pCode', function() {
         analytics.initialize();
-        analytics.page();
         analytics.assert(window._qevents[0].qacct === options.pCode);
       });
 
       it('userId should be a string', function() {
         analytics.user().identify(1738);
         analytics.initialize();
-        analytics.page();
         analytics.assert(window._qevents[0].uid === '1738');
       });
 
       it('should push the user id', function() {
         analytics.user().identify('id');
         analytics.initialize();
-        analytics.page();
         analytics.assert(window._qevents[0].uid === 'id');
       });
 
       it('should call #load', function() {
         analytics.initialize();
-        analytics.page();
         analytics.called(quantcast.load);
-      });
-
-      it('should push "refresh" with labels when given a page', function() {
-        analytics.initialize();
-        analytics.page('category', 'name');
-        var pushed = window._qevents[0];
-        analytics.assert(options.pCode === pushed.qacct);
-        analytics.assert(pushed.event == null);
-        analytics.assert(pushed.labels === 'category.name');
       });
     });
   });

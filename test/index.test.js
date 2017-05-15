@@ -256,6 +256,16 @@ describe('Quantcast', function() {
           });
         });
 
+        it('should push total in place of revenue if both are passed for the event', function() {
+          analytics.track('event', { total: 12.45 });
+          analytics.called(window._qevents.push, {
+            event: 'click',
+            labels: 'event',
+            qacct: options.pCode,
+            revenue: '12.45'
+          });
+        });
+
         it('should push custom label from properties for the event', function() {
           analytics.track('event', { label: 'newLabel' });
           analytics.called(window._qevents.push, {

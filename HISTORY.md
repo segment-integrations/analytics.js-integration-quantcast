@@ -1,4 +1,9 @@
 
+2.1.2 / 2017-05-17
+==================
+
+* Pass total || revenue for completed order events
+
 2.1.1 / 2016-08-16
 ==================
 

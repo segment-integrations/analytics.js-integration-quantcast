@@ -331,22 +331,44 @@ describe('Quantcast', function() {
             category: 'tech',
             total: 99.99,
             shipping: 13.99,
-            tax: 20.99,
-            products: [{
-              quantity: 1,
-              price: 24.75,
-              name: 'my product',
-              sku: 'p-298'
-            }, {
-              quantity: 3,
-              price: 24.75,
-              name: 'other product',
-              sku: 'p-299'
-            }]
+            tax: 20.99
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
             labels: 'order completed',
+            orderid: '780bc55',
+            qacct: options.pCode,
+            revenue: '99.99'
+          });
+        });
+
+        it('should handle include products for order completed events', function() {
+          analytics.track('order completed', {
+            orderId: '780bc55',
+            category: 'tech',
+            total: 99.99,
+            shipping: 13.99,
+            tax: 20.99,
+            products: [
+              {
+                product_id: 'product_1',
+                quantity: 1,
+                price: 24.75,
+                name: 'my product',
+                sku: 'p-298'
+              },
+              {
+                product_id: 'product_2',
+                quantity: 3,
+                price: 24.75,
+                name: 'other product',
+                sku: 'p-299'
+              }
+            ]
+          });
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: 'order completed,_fp.pcat.ProductID=product_1,_fp.pcat.SKU=p-298,_fp.pcat.Name=my product,_fp.pcat.Price=24.75,_fp.pcat.Quantity=1,_fp.pcat.ProductID=product_2,_fp.pcat.SKU=p-299,_fp.pcat.Name=other product,_fp.pcat.Price=24.75,_fp.pcat.Quantity=3',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'
@@ -360,18 +382,7 @@ describe('Quantcast', function() {
             total: 99.99,
             shipping: 13.99,
             tax: 20.99,
-            repeat: false,
-            products: [{
-              quantity: 1,
-              price: 24.75,
-              name: 'my product',
-              sku: 'p-298'
-            }, {
-              quantity: 3,
-              price: 24.75,
-              name: 'other product',
-              sku: 'p-299'
-            }]
+            repeat: false
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
@@ -388,18 +399,7 @@ describe('Quantcast', function() {
             category: 'tech',
             total: 99.99,
             shipping: 13.99,
-            tax: 20.99,
-            products: [{
-              quantity: 1,
-              price: 24.75,
-              name: 'my product',
-              sku: 'p-298'
-            }, {
-              quantity: 3,
-              price: 24.75,
-              name: 'other product',
-              sku: 'p-299'
-            }]
+            tax: 20.99
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
@@ -417,18 +417,7 @@ describe('Quantcast', function() {
             total: 99.99,
             shipping: 13.99,
             tax: 20.99,
-            repeat: true,
-            products: [{
-              quantity: 1,
-              price: 24.75,
-              name: 'my product',
-              sku: 'p-298'
-            }, {
-              quantity: 3,
-              price: 24.75,
-              name: 'other product',
-              sku: 'p-299'
-            }]
+            repeat: true
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
@@ -459,22 +448,45 @@ describe('Quantcast', function() {
             repeat: true,
             total: 99.99,
             shipping: 13.99,
-            tax: 20.99,
-            products: [{
-              quantity: 1,
-              price: 24.75,
-              name: 'my product',
-              sku: 'p-298'
-            }, {
-              quantity: 3,
-              price: 24.75,
-              name: 'other product',
-              sku: 'p-299'
-            }]
+            tax: 20.99
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
             labels: '_fp.event.order completed,_fp.pcat.tech,_fp.customer.repeat',
+            orderid: '780bc55',
+            qacct: options.pCode,
+            revenue: '99.99'
+          });
+        });
+
+        it('should handle include products for order completed events', function() {
+          quantcast.options.advertise = true;
+          analytics.track('order completed', {
+            orderId: '780bc55',
+            category: 'tech',
+            total: 99.99,
+            shipping: 13.99,
+            tax: 20.99,
+            products: [
+              {
+                product_id: 'product_1',
+                quantity: 1,
+                price: 24.75,
+                name: 'my product',
+                sku: 'p-298'
+              },
+              {
+                product_id: 'product_2',
+                quantity: 3,
+                price: 24.75,
+                name: 'other product',
+                sku: 'p-299'
+              }
+            ]
+          });
+          analytics.called(window._qevents.push, {
+            event: 'refresh',
+            labels: '_fp.event.order completed,_fp.pcat.tech,_fp.pcat.ProductID=product_1,_fp.pcat.SKU=p-298,_fp.pcat.Name=my product,_fp.pcat.Price=24.75,_fp.pcat.Quantity=1,_fp.pcat.ProductID=product_2,_fp.pcat.SKU=p-299,_fp.pcat.Name=other product,_fp.pcat.Price=24.75,_fp.pcat.Quantity=3',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'
@@ -489,18 +501,7 @@ describe('Quantcast', function() {
             repeat: false,
             total: 99.99,
             shipping: 13.99,
-            tax: 20.99,
-            products: [{
-              quantity: 1,
-              price: 24.75,
-              name: 'my product',
-              sku: 'p-298'
-            }, {
-              quantity: 3,
-              price: 24.75,
-              name: 'other product',
-              sku: 'p-299'
-            }]
+            tax: 20.99
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',

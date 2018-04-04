@@ -351,14 +351,14 @@ describe('Quantcast', function() {
             tax: 20.99,
             products: [
               {
-                product_id: 'product_1',
+                productId: 'product_1',
                 quantity: 1,
                 price: 24.75,
                 name: 'my product',
                 sku: 'p-298'
               },
               {
-                product_id: 'product_2',
+                productId: 'product_2',
                 quantity: 3,
                 price: 24.75,
                 name: 'other product',
@@ -469,14 +469,14 @@ describe('Quantcast', function() {
             tax: 20.99,
             products: [
               {
-                product_id: 'product_1',
+                productId: 'product_1',
                 quantity: 1,
                 price: 24.75,
                 name: 'my product',
                 sku: 'p-298'
               },
               {
-                product_id: 'product_2',
+                productId: 'product_2',
                 quantity: 3,
                 price: 24.75,
                 name: 'other product',

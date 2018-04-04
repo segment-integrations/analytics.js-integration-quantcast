@@ -1,4 +1,9 @@
 
+2.2.0 / 2018-04-04
+==================
+
+  * feat(track): add products for order completed event (#13)
+
 2.1.2 / 2017-05-17
 ==================
 

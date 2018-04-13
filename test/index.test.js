@@ -368,7 +368,7 @@ describe('Quantcast', function() {
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
-            labels: 'order completed,_fp.pcat.ProductID=product_1,_fp.pcat.SKU=p-298,_fp.pcat.Name=my product,_fp.pcat.Price=24.75,_fp.pcat.Quantity=1,_fp.pcat.ProductID=product_2,_fp.pcat.SKU=p-299,_fp.pcat.Name=other product,_fp.pcat.Price=24.75,_fp.pcat.Quantity=3',
+            labels: 'order completed,_fp.pcat.Name.my product,_fp.pcat.ProductID.product_1,_fp.pcat.SKU.p-298,_fp.pcat.Name.other product,_fp.pcat.ProductID.product_2,_fp.pcat.SKU.p-299,_fp.pcat.Quantity.4',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'
@@ -486,7 +486,7 @@ describe('Quantcast', function() {
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
-            labels: '_fp.event.order completed,_fp.pcat.tech,_fp.pcat.ProductID=product_1,_fp.pcat.SKU=p-298,_fp.pcat.Name=my product,_fp.pcat.Price=24.75,_fp.pcat.Quantity=1,_fp.pcat.ProductID=product_2,_fp.pcat.SKU=p-299,_fp.pcat.Name=other product,_fp.pcat.Price=24.75,_fp.pcat.Quantity=3',
+            labels: '_fp.event.order completed,_fp.pcat.tech,_fp.pcat.Name.my product,_fp.pcat.ProductID.product_1,_fp.pcat.SKU.p-298,_fp.pcat.Name.other product,_fp.pcat.ProductID.product_2,_fp.pcat.SKU.p-299,_fp.pcat.Quantity.4',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'

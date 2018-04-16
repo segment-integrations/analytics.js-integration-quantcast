@@ -342,39 +342,6 @@ describe('Quantcast', function() {
           });
         });
 
-        it('should handle include products for order completed events', function() {
-          analytics.track('order completed', {
-            orderId: '780bc55',
-            category: 'tech',
-            total: 99.99,
-            shipping: 13.99,
-            tax: 20.99,
-            products: [
-              {
-                productId: 'product_1',
-                quantity: 1,
-                price: 24.75,
-                name: 'my product',
-                sku: 'p-298'
-              },
-              {
-                productId: 'product_2',
-                quantity: 3,
-                price: 24.75,
-                name: 'other product',
-                sku: 'p-299'
-              }
-            ]
-          });
-          analytics.called(window._qevents.push, {
-            event: 'refresh',
-            labels: 'order completed,_fp.pcat.Name.my product,_fp.pcat.ProductID.product_1,_fp.pcat.SKU.p-298,_fp.pcat.Name.other product,_fp.pcat.ProductID.product_2,_fp.pcat.SKU.p-299,_fp.pcat.Quantity.4',
-            orderid: '780bc55',
-            qacct: options.pCode,
-            revenue: '99.99'
-          });
-        });
-
         it('should set repeat property if present', function() {
           analytics.track('order completed', {
             orderId: '780bc55',
@@ -459,7 +426,7 @@ describe('Quantcast', function() {
           });
         });
 
-        it('should handle include products for order completed events', function() {
+        it('should not include products for order completed events', function() {
           quantcast.options.advertise = true;
           analytics.track('order completed', {
             orderId: '780bc55',
@@ -486,10 +453,47 @@ describe('Quantcast', function() {
           });
           analytics.called(window._qevents.push, {
             event: 'refresh',
-            labels: '_fp.event.order completed,_fp.pcat.tech,_fp.pcat.Name.my product,_fp.pcat.ProductID.product_1,_fp.pcat.SKU.p-298,_fp.pcat.Name.other product,_fp.pcat.ProductID.product_2,_fp.pcat.SKU.p-299,_fp.pcat.Quantity.4',
+            labels: '_fp.event.order completed,_fp.pcat.tech',
             orderid: '780bc55',
             qacct: options.pCode,
             revenue: '99.99'
+          });
+        });
+
+        describe('when advertiseProducts is true', function() {
+          it('should handle include products for order completed events', function() {
+            quantcast.options.advertise = true;
+            quantcast.options.advertiseProducts = true;
+            analytics.track('order completed', {
+              orderId: '780bc55',
+              category: 'tech',
+              total: 99.99,
+              shipping: 13.99,
+              tax: 20.99,
+              products: [
+                {
+                  productId: 'product_1',
+                  quantity: 1,
+                  price: 24.75,
+                  name: 'my product',
+                  sku: 'p-298'
+                },
+                {
+                  productId: 'product_2',
+                  quantity: 3,
+                  price: 24.75,
+                  name: 'other product',
+                  sku: 'p-299'
+                }
+              ]
+            });
+            analytics.called(window._qevents.push, {
+              event: 'refresh',
+              labels: '_fp.event.order completed,_fp.pcat.tech,_fp.pcat.Name.my product,_fp.pcat.ProductID.product_1,_fp.pcat.SKU.p-298,_fp.pcat.Name.other product,_fp.pcat.ProductID.product_2,_fp.pcat.SKU.p-299,_fp.pcat.Quantity.4',
+              orderid: '780bc55',
+              qacct: options.pCode,
+              revenue: '99.99'
+            });
           });
         });
 

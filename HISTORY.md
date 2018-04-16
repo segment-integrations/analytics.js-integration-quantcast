@@ -1,4 +1,9 @@
 
+2.2.1 / 2018-04-16
+==================
+
+  * PLATFORM-1462: follow up with changes from quantcast team (#14)
+
 2.2.0 / 2018-04-04
 ==================
 
